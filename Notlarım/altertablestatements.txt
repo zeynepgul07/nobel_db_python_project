@@ -1,0 +1,17 @@
+#### EĞER PRIMARY KEY EKLEMEK İSTERSEN BY KOMUT
+ALTER TABLE public.orders
+ADD CONSTRAINT unique_order_id UNIQUE (order_id),
+ALTER COLUMN order_id SET NOT NULL;
+
+-- Şimdi, order_id'yi PRIMARY KEY olarak ayarlayın
+ALTER TABLE public.orders
+ADD PRIMARY KEY (order_id);
+
+
+
+#### EĞER FOREGIN KEY EKLEMEK İSTERSEN BY KOMUT
+
+ALTER TABLE order_items 
+ADD CONSTRAINT fk_order
+FOREIGN KEY (order_id)
+REFERENCES orders (order_id);

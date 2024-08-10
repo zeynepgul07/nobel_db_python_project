@@ -1,0 +1,30 @@
+WITH seller_category_counts AS (
+    SELECT
+        oi.seller_id,
+        COUNT(DISTINCT p.product_category_name) AS num_categories
+    FROM
+        public.order_items AS oi
+    JOIN
+        public.products AS p ON oi.product_id = p.product_id
+    GROUP BY
+        oi.seller_id
+),
+seller_order_counts AS (
+    SELECT
+        oi.seller_id,
+        COUNT(oi.order_id) AS total_orders
+    FROM
+        public.order_items AS oi
+    GROUP BY
+        oi.seller_id
+)
+SELECT
+    scc.seller_id,
+    scc.num_categories,
+    soc.total_orders
+FROM
+    seller_category_counts AS scc
+JOIN
+    seller_order_counts AS soc ON scc.seller_id = soc.seller_id
+ORDER BY
+    scc.num_categories DESC, soc.total_orders DESC;

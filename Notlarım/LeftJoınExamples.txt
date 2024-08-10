@@ -1,0 +1,37 @@
+SELECT DISTINCT
+    DATE_TRUNC('month', order_approved_at) AS month,
+    COUNT(*) AS total_orders, op.payment_sequential, op.payment_type, op.payment_installments, op.payment_value, op.order_id
+
+FROM
+    public.order_payments as op
+LEFT JOIN public.orders as o ON op.order_id = o.order_id
+WHERE
+    order_approved_at IS NOT NULL AND op.payment_value IS NOT NULL
+GROUP BY
+    month, op.payment_sequential, op.payment_type, op.payment_installments, op.payment_value, op.order_id
+ORDER BY
+    month;
+	
+
+	
+	
+	
+	
+SELECT
+    DATE_TRUNC('month', o.order_approved_at) AS month,
+    COUNT(*) AS total_orders,
+    SUM(mo.total_orders * op.payment_installments * op.payment_value) AS total_payment_amount,
+    op.payment_sequential,
+    op.payment_type,
+    op.payment_installments,
+    op.payment_value
+FROM
+    public.order_payments as op
+LEFT JOIN public.orders as o ON op.order_id = o.order_id
+INNER JOIN monthly_orders as mo ON o.order_id = mo.order_id 
+WHERE
+    o.order_approved_at IS NOT NULL
+GROUP BY
+    month, o.order_approved_at, op.payment_sequential, op.payment_type, op.payment_installments, op.payment_value
+ORDER BY
+    month;
